@@ -794,3 +794,7 @@ I learned how to:
 - Clean up Azure resources after testing
 
 The project also showed the importance of cost awareness when working with cloud resources, especially in an educational subscription.
+
+
+IP restriction was configured to allow only my current public IP address. This demonstrates how access to the App Service can be limited for security reasons.
+IP restriction was configured to allow only my current public IP address: 80.217.192.54/32. All other IP addresses are denied by default. If the teacher needs to test the API from another network, that IP address must also be added to the allow list.
