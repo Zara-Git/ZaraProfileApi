@@ -52,8 +52,8 @@ az sql server create `
   --admin-password $sqlPassword
 
 # 6. Create Azure SQL Database
-# Note: Basic is used for CLI scripting. If your teacher requires strictly free SQL,
-# create Azure SQL Free offer manually in Portal and document why.
+# Note: Basic is used for CLI scripting. If a strictly free SQL offer is required,
+# it can be created manually in Azure Portal and documented.
 az sql db create `
   --resource-group $resourceGroup `
   --server $sqlServer `
@@ -104,6 +104,11 @@ az keyvault secret set `
   --name "SqlConnectionString" `
   --value $connectionString
 
+if ($LASTEXITCODE -ne 0) {
+  Write-Host "Key Vault secret could not be created. Possible reason: ForbiddenByRbac / missing permission to create secrets."
+  Write-Host "This limitation must be documented in README."
+}
+
 # 14. Add connection string to App Service settings
 az webapp config appsettings set `
   --resource-group $resourceGroup `
@@ -122,11 +127,19 @@ az webapp config appsettings set `
   --name $appName `
   --settings "APPLICATIONINSIGHTS_CONNECTION_STRING=$appInsightsConnectionString"
 
-# 16. Note about IP restriction
-Write-Host "Next step: add IP restriction after checking your public IP."
+# 16. Add IP restriction
+$myIp = "80.217.192.54/32"
+
+az webapp config access-restriction add `
+  --resource-group $resourceGroup `
+  --name $appName `
+  --rule-name "AllowMyIP" `
+  --action Allow `
+  --ip-address $myIp `
+  --priority 100
 
 # 17. Note about backup
-Write-Host "Backup note: App Service backup is not supported in Free tier. Document this limitation or ask teacher if temporary Basic tier is required."
+Write-Host "Backup note: App Service backup is not supported in Free tier. Document this limitation."
 
 # 18. Final URL
 Write-Host "Azure setup completed!"

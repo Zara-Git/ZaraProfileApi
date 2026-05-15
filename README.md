@@ -2,80 +2,61 @@
 
 ## Project Overview
 
-ZaraProfileApi is a simple ASP.NET Core Web API created for the Azure App Service deployment assignment.
+ZaraProfileApi is an ASP.NET Core Web API created for the Azure App Service deployment assignment.
 
-The API manages profile information such as full name, title, about text, email, LinkedIn and GitHub links. The project uses Entity Framework Core for database connection and Swagger for testing the API endpoints.
+The API manages profile information such as:
 
-The main goal of this project is to demonstrate how to create, test and deploy a working Web API to Azure App Service using Azure CLI, Azure SQL Database, Application Insights, Storage Account, Key Vault, Managed Identity and GitHub Actions.
+- Full name
+- Title
+- About text
+- Email
+- LinkedIn link
+- GitHub link
 
----
-
-## Project URLs
-
-### Local development URL
-
-The API was tested locally with Swagger using:
-
-```text
-https://localhost:7083/swagger
-```
-
-The local API also listened on:
-
-```text
-https://localhost:7083
-http://localhost:5217
-```
-
-### Azure App Service URL
-
-The Azure App Service was created with the following URL:
-
-```text
-https://zara-profile-api-free-2026.azurewebsites.net
-```
-
-After deployment, Swagger should be available at:
-
-```text
-https://zara-profile-api-free-2026.azurewebsites.net/swagger
-```
-
-### API Endpoints on Azure
-
-After deployment, the API endpoints will be available here:
-
-```text
-GET     https://zara-profile-api-free-2026.azurewebsites.net/api/Profiles
-POST    https://zara-profile-api-free-2026.azurewebsites.net/api/Profiles
-GET     https://zara-profile-api-free-2026.azurewebsites.net/api/Profiles/{id}
-PUT     https://zara-profile-api-free-2026.azurewebsites.net/api/Profiles/{id}
-DELETE  https://zara-profile-api-free-2026.azurewebsites.net/api/Profiles/{id}
-```
-
----
-
-## Technologies Used
+The project uses:
 
 - ASP.NET Core Web API
-- .NET 8
 - Entity Framework Core
-- SQL Server / Azure SQL Database
-- Swagger / OpenAPI
-- Azure App Service
-- Azure App Service Plan
-- Azure SQL Server
 - Azure SQL Database
-- Azure Storage Account
+- Swagger
+- Azure App Service
+- Application Insights
 - Azure Key Vault
 - Managed Identity
-- Application Insights
+- Azure Storage Account
 - Azure CLI
 - GitHub Actions
+
+The goal of the project was to deploy a working Web API to Azure App Service, connect it to a database, automate deployment, configure basic security, enable monitoring, and document the process.
+
+---
+
+## Azure Resources
+
+The following Azure resources were created using Azure CLI:
+
+| Resource | Name |
+|---|---|
+| Resource Group | `RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg` |
+| App Service Plan | `plan-zara-profile-free` |
+| App Service | `zara-profile-api-free-2026` |
+| Azure SQL Server | `zara-profile-sql-free26` |
+| Azure SQL Database | `ZaraProfileDb` |
+| Storage Account | `zaraprofilestfree26` |
+| Key Vault | `kv-zara-prof-free26` |
+| Application Insights | `appi-zara-profile-free` |
+
+The resource group was provided by the school:
+
+```text
+RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg
+```
 
 ---
 
 ## Project Structure
+
+The project contains the following important files and folders:
 
 ```text
 ZaraProfileApi
@@ -87,354 +68,57 @@ ZaraProfileApi
 │   └── AppDbContext.cs
 │
 ├── Migrations
-│   └── InitialCreate
+│   ├── 20260502210046_InitialCreate.cs
+│   └── AppDbContextModelSnapshot.cs
 │
 ├── Models
 │   └── Profile.cs
 │
+├── .github
+│   └── workflows
+│       └── deploy.yml
+│
 ├── appsettings.json
+├── azure-setup.ps1
 ├── Program.cs
-├── ZaraProfileApi.csproj
-├── ZaraProfileApi.http
-└── azure-setup.ps1
+├── README.md
+└── ZaraProfileApi.http
 ```
+
+Explanation:
+
+- `Models/Profile.cs` defines the Profile model.
+- `Data/AppDbContext.cs` configures the Entity Framework Core database context.
+- `Controllers/ProfilesController.cs` contains the API endpoints.
+- `Migrations` contains the EF Core database migration.
+- `.github/workflows/deploy.yml` contains the GitHub Actions deployment workflow.
+- `azure-setup.ps1` contains the Azure CLI script used to create Azure resources.
+- `README.md` documents the process and verification steps.
 
 ---
 
-## Model
+# 1. Create Azure App Service and Deploy a Working Application
 
-The API uses a `Profile` model.
+## Requirement
 
-```csharp
-namespace ZaraProfileApi.Models;
+The assignment requires:
 
-public class Profile
-{
-    public int Id { get; set; }
-
-    public string FullName { get; set; } = string.Empty;
-
-    public string Title { get; set; } = string.Empty;
-
-    public string About { get; set; } = string.Empty;
-
-    public string Email { get; set; } = string.Empty;
-
-    public string LinkedIn { get; set; } = string.Empty;
-
-    public string GitHub { get; set; } = string.Empty;
-}
-```
+- Create an Azure App Service using Azure CLI.
+- Create a Web API with database connection using Entity Framework Core.
+- Publish the application to Azure App Service using GitHub Actions or Azure DevOps.
+- Confirm that the application works correctly after deployment.
 
 ---
 
-## Database Context
+## 1.1 Azure App Service Created with Azure CLI
 
-Entity Framework Core is used to connect the API to a SQL database.
-
-```csharp
-using Microsoft.EntityFrameworkCore;
-using ZaraProfileApi.Models;
-
-namespace ZaraProfileApi.Data;
-
-public class AppDbContext : DbContext
-{
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options)
-    {
-    }
-
-    public DbSet<Profile> Profiles { get; set; }
-}
-```
-
----
-
-## API Endpoints
-
-The API contains the following endpoints:
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/Profiles` | Get all profiles |
-| GET | `/api/Profiles/{id}` | Get one profile by ID |
-| POST | `/api/Profiles` | Create a new profile |
-| PUT | `/api/Profiles/{id}` | Update an existing profile |
-| DELETE | `/api/Profiles/{id}` | Delete a profile |
-
----
-
-## Local Development
-
-### 1. Create the Web API project
-
-The project was created as an ASP.NET Core Web API project in Visual Studio.
-
-The project was later changed to use:
-
-```xml
-<TargetFramework>net8.0</TargetFramework>
-```
-
-This was done to make the project more compatible with Azure App Service.
-
----
-
-### 2. Install required NuGet packages
-
-The following packages were used:
-
-```xml
-<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7" />
-<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-```
-
----
-
-### 3. Configure local database connection
-
-In `appsettings.json`, a local SQL Server LocalDB connection string was added:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=ZaraProfileDb;Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True;"
-  },
-
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-
-  "AllowedHosts": "*"
-}
-```
-
----
-
-### 4. Configure Program.cs
-
-The database context and Swagger were configured in `Program.cs`.
-
-```csharp
-using Microsoft.EntityFrameworkCore;
-using ZaraProfileApi.Data;
-
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddControllers();
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
-```
-
----
-
-### 5. Create and apply database migration
-
-The database migration was created using Entity Framework Core.
-
-In Package Manager Console:
-
-```powershell
-Add-Migration InitialCreate
-Update-Database
-```
-
-The database was successfully created and updated.
-
-The output confirmed:
-
-```text
-The database is already up to date.
-Done.
-```
-
----
-
-## Local Testing with Swagger
-
-The API was tested locally using Swagger.
-
-The application was running on:
-
-```text
-https://localhost:7083/swagger
-```
-
-### POST test
-
-A new profile was created using:
-
-```json
-{
-  "fullName": "Zara Rangkhoni",
-  "title": "Frontend & .NET Cloud Developer",
-  "about": "I am a developer with a background in frontend, UI/UX and cloud development.",
-  "email": "zara@example.com",
-  "linkedIn": "https://www.linkedin.com/in/your-profile",
-  "gitHub": "https://github.com/your-username"
-}
-```
-
-The API returned:
-
-```text
-201 Created
-```
-
-This confirmed that the API could save data to the database.
-
-### GET test
-
-The endpoint:
-
-```text
-GET /api/Profiles
-```
-
-returned:
-
-```json
-[
-  {
-    "id": 1,
-    "fullName": "Zara Rangkhoni",
-    "title": "Frontend & .NET Cloud Developer",
-    "about": "I am a developer with a background in frontend, UI/UX and cloud development.",
-    "email": "zara@example.com",
-    "linkedIn": "https://www.linkedin.com/in/your-profile",
-    "gitHub": "https://github.com/your-username"
-  }
-]
-```
-
-The API returned:
-
-```text
-200 OK
-```
-
-This confirmed that the API could read data from the database.
-
----
-
-## Azure Setup
-
-Azure resources were created using Azure CLI, as required by the assignment.
-
-The school provided an Azure subscription and resource group.
-
-### Azure subscription
-
-```text
-SUB-Utbildning-DotNetCloudDeveloper-2026-VT-Mars-Goteborg
-```
-
-### Resource group
-
-```text
-RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg
-```
-
-The resource group already existed and was provided by the school. Therefore, the script does not create a new resource group.
-
----
-
-## Azure CLI Installation and Login
-
-Azure CLI was installed using PowerShell:
-
-```powershell
-winget install --exact --id Microsoft.AzureCLI
-```
-
-After installation, Azure CLI was verified with:
-
-```powershell
-az --version
-```
-
-Login was done using:
-
-```powershell
-az login --use-device-code
-```
-
-The active Azure account was checked with:
-
-```powershell
-az account show
-```
-
----
-
-## Azure Resources Created
-
-The following Azure resources were created for this project:
-
-| Resource | Name | Purpose |
-|---|---|---|
-| App Service Plan | `plan-zara-profile-free` | Hosts the App Service using Free tier |
-| App Service | `zara-profile-api-free-2026` | Hosts the Web API |
-| Azure SQL Server | `zara-profile-sql-free26` | SQL server for the database |
-| Azure SQL Database | `ZaraProfileDb` | Stores profile data |
-| Storage Account | `zaraprofilestfree26` | Used for static files or logs |
-| Key Vault | `kv-zara-prof-free26` | Intended for storing secrets |
-| Application Insights | `appi-zara-profile-free` | Monitoring and logging |
-| Managed Identity | Enabled on App Service | Used for secure Azure resource access |
-
----
-
-## Azure Setup Script
-
-The Azure resources were created using the script:
+The Azure App Service was created using Azure CLI in the script:
 
 ```text
 azure-setup.ps1
 ```
 
-The script creates the Azure resources, enables HTTPS, configures App Service settings and connects Application Insights.
-
-Important variables in the script:
-
-```powershell
-$resourceGroup = "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg"
-$location = "swedencentral"
-
-$appServicePlan = "plan-zara-profile-free"
-$appName = "zara-profile-api-free-2026"
-
-$sqlServer = "zara-profile-sql-free26"
-$sqlDatabase = "ZaraProfileDb"
-
-$storageAccount = "zaraprofilestfree26"
-$keyVault = "kv-zara-prof-free26"
-$appInsights = "appi-zara-profile-free"
-```
-
-The App Service Plan was created using the Free tier:
+The App Service Plan was created with the Free tier:
 
 ```powershell
 az appservice plan create `
@@ -445,7 +129,7 @@ az appservice plan create `
   --is-linux
 ```
 
-The Web App was created using:
+The Azure Web App / App Service was created with:
 
 ```powershell
 az webapp create `
@@ -455,60 +139,321 @@ az webapp create `
   --runtime "DOTNETCORE:8.0"
 ```
 
-HTTPS only was enabled:
+The deployed App Service name is:
 
-```powershell
-az webapp update `
-  --resource-group $resourceGroup `
-  --name $appName `
-  --https-only true
+```text
+zara-profile-api-free-2026
 ```
 
-Azure SQL Server and database were created:
+The App Service URL is:
 
-```powershell
-az sql server create `
-  --name $sqlServer `
-  --resource-group $resourceGroup `
-  --location $location `
-  --admin-user $sqlAdmin `
-  --admin-password $sqlPassword
-
-az sql db create `
-  --resource-group $resourceGroup `
-  --server $sqlServer `
-  --name $sqlDatabase `
-  --service-objective Basic
+```text
+https://zara-profile-api-free-2026.azurewebsites.net
 ```
 
-A Storage Account was created:
+Swagger is available at:
 
-```powershell
-az storage account create `
-  --name $storageAccount `
-  --resource-group $resourceGroup `
-  --location $location `
-  --sku Standard_LRS
+```text
+https://zara-profile-api-free-2026.azurewebsites.net/swagger
 ```
 
-A Key Vault was created:
+---
 
-```powershell
-az keyvault create `
-  --name $keyVault `
-  --resource-group $resourceGroup `
-  --location $location
+## 1.2 Web API with Entity Framework Core and Database Connection
+
+The project is an ASP.NET Core Web API that uses Entity Framework Core.
+
+The database model is defined in:
+
+```text
+Models/Profile.cs
 ```
 
-Managed Identity was enabled:
+The database context is defined in:
 
-```powershell
-az webapp identity assign `
-  --name $appName `
-  --resource-group $resourceGroup
+```text
+Data/AppDbContext.cs
 ```
 
-Application Insights was created:
+The controller is defined in:
+
+```text
+Controllers/ProfilesController.cs
+```
+
+The project includes an EF Core migration:
+
+```text
+Migrations/20260502210046_InitialCreate.cs
+```
+
+The migration created the `Profiles` table in Azure SQL Database.
+
+The Azure SQL Database used by the application is:
+
+```text
+ZaraProfileDb
+```
+
+The Azure SQL Server is:
+
+```text
+zara-profile-sql-free26
+```
+
+After deployment, the EF Core migration was applied to Azure SQL Database using:
+
+```powershell
+dotnet ef database update --connection "Azure SQL connection string"
+```
+
+This created the required `Profiles` table in Azure SQL Database.
+
+---
+
+## 1.3 Deployment with GitHub Actions
+
+The API was deployed to Azure App Service using GitHub Actions.
+
+The workflow file is located in:
+
+```text
+.github/workflows/deploy.yml
+```
+
+The Azure publish profile was stored securely as a GitHub repository secret:
+
+```text
+AZURE_WEBAPP_PUBLISH_PROFILE
+```
+
+The GitHub Actions workflow was used to automate deployment to Azure App Service.
+
+The workflow completed successfully, and the deployed API was available through Swagger:
+
+```text
+https://zara-profile-api-free-2026.azurewebsites.net/swagger
+```
+
+---
+
+## 1.4 Testing the Deployed API
+
+The deployed API was tested through Swagger.
+
+The following endpoints were tested:
+
+| Method | Endpoint | Result |
+|---|---|---|
+| GET | `/api/Profiles` | 200 OK |
+| POST | `/api/Profiles` | Profile created successfully |
+| GET | `/api/Profiles` | Returned the saved profile |
+
+Example POST body used for testing:
+
+```json
+{
+  "fullName": "Zara Rangkhoni",
+  "title": "Frontend and .NET Cloud Developer",
+  "about": "This is a test profile deployed on Azure.",
+  "email": "test@example.com",
+  "linkedIn": "https://linkedin.com",
+  "gitHub": "https://github.com"
+}
+```
+
+The test confirmed that:
+
+- The API was successfully deployed to Azure App Service.
+- Swagger was available online.
+- The API endpoints worked.
+- The API could save data to Azure SQL Database.
+- The API could retrieve saved data from Azure SQL Database.
+
+---
+
+# 2. Azure CLI Verification Commands
+
+This section contains Azure CLI commands that can be copied and executed during the presentation to verify the deployment.
+
+---
+
+## 2.1 Check Current Azure Account
+
+Before running Azure CLI commands, I can check which Azure account and subscription I am using:
+
+```powershell
+az account show --output table
+```
+
+This confirms that I am logged in to Azure CLI and using the correct Azure subscription.
+
+---
+
+## 2.2 Verify that the Azure App Service Exists
+
+I can verify the Azure App Service using Azure CLI:
+
+```powershell
+az webapp show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-api-free-2026"
+```
+
+This command shows the full configuration of the Azure App Service.
+
+---
+
+## 2.3 Show App Service Status in a Readable Table
+
+To make the output easier to read during the presentation, I can use this command:
+
+```powershell
+az webapp show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-api-free-2026" `
+  --query "{name:name, state:state, enabled:enabled, url:defaultHostName, httpsOnly:httpsOnly}" `
+  --output table
+```
+
+Expected result:
+
+```text
+Name                        State    Enabled    Url                                          HttpsOnly
+--------------------------  -------  ---------  -------------------------------------------  ---------
+zara-profile-api-free-2026  Running  True       zara-profile-api-free-2026.azurewebsites.net True
+```
+
+This confirms that:
+
+- The App Service exists.
+- The App Service is running.
+- The App Service is enabled.
+- The App Service has a public Azure URL.
+- HTTPS Only is enabled.
+
+Presentation explanation:
+
+```text
+I use Azure CLI to verify that the App Service exists and is running. 
+The resource group and app name are the same values that I used in my azure-setup.ps1 script.
+```
+
+---
+
+## 2.4 Verify the App Service Plan
+
+The App Service is connected to the App Service Plan `plan-zara-profile-free`.
+
+```powershell
+az appservice plan show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "plan-zara-profile-free" `
+  --query "{name:name, location:location, sku:sku.tier}" `
+  --output table
+```
+
+Expected result:
+
+```text
+Name                    Location        Sku
+----------------------  --------------  ----
+plan-zara-profile-free  Sweden Central  Free
+```
+
+This confirms that:
+
+- The App Service Plan exists.
+- It is located in Sweden Central.
+- It uses the Free pricing tier.
+
+Presentation explanation:
+
+```text
+Here I verify the App Service Plan with Azure CLI. 
+The output shows that the plan exists, it is located in Sweden Central, and it uses the Free tier.
+```
+
+---
+
+## 2.5 Verify the Azure SQL Database
+
+I can verify that the Azure SQL Database exists using this command:
+
+```powershell
+az sql db show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --server "zara-profile-sql-free26" `
+  --name "ZaraProfileDb" `
+  --query "{name:name, status:status, location:location}" `
+  --output table
+```
+
+This confirms that the Azure SQL Database exists.
+
+---
+
+## 2.6 Verify the Azure SQL Server
+
+I can verify the Azure SQL Server using:
+
+```powershell
+az sql server show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-sql-free26" `
+  --query "{name:name, location:location, administratorLogin:administratorLogin}" `
+  --output table
+```
+
+This confirms that the SQL Server exists in the correct resource group.
+
+---
+
+## 2.7 Verify EF Core Migrations Locally
+
+To check the EF Core migrations in the project, I can run:
+
+```powershell
+dotnet ef migrations list
+```
+
+Expected migration:
+
+```text
+20260502210046_InitialCreate
+```
+
+This confirms that Entity Framework Core migrations were created.
+
+---
+
+## 2.8 Verify the Deployed Application in Browser
+
+The deployed API can be opened in the browser through Swagger:
+
+```text
+https://zara-profile-api-free-2026.azurewebsites.net/swagger
+```
+
+In Swagger, I tested:
+
+```text
+GET /api/Profiles
+POST /api/Profiles
+GET /api/Profiles
+```
+
+This confirms that the application works correctly after deployment.
+
+---
+
+# 3. Application Insights for Logging and Monitoring
+
+## Requirement
+
+The assignment requires Application Insights to be enabled for logging and monitoring.
+
+Application Insights was created using Azure CLI:
 
 ```powershell
 az monitor app-insights component create `
@@ -518,7 +463,323 @@ az monitor app-insights component create `
   --application-type web
 ```
 
-The SQL connection string was added to App Service application settings:
+Application Insights resource:
+
+```text
+appi-zara-profile-free
+```
+
+The Application Insights connection string was added to the App Service application settings:
+
+```powershell
+$appInsightsConnectionString = az monitor app-insights component show `
+  --app $appInsights `
+  --resource-group $resourceGroup `
+  --query connectionString `
+  --output tsv
+
+az webapp config appsettings set `
+  --resource-group $resourceGroup `
+  --name $appName `
+  --settings "APPLICATIONINSIGHTS_CONNECTION_STRING=$appInsightsConnectionString"
+```
+
+After testing the API through Swagger, I verified that requests were collected in Application Insights Logs.
+
+Examples of logged requests:
+
+```text
+GET Profiles/GetProfiles
+POST Profiles/CreateProfile
+```
+
+The logs showed:
+
+- Request name
+- Status code
+- Success value
+- Response duration
+
+---
+
+## 3.1 Verify Application Insights with Azure CLI
+
+I can verify Application Insights using:
+
+```powershell
+az monitor app-insights component show `
+  --app "appi-zara-profile-free" `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --query "{name:name, location:location, appId:appId}" `
+  --output table
+```
+
+This confirms that the Application Insights resource exists.
+
+---
+
+## 3.2 Presentation Explanation
+
+```text
+Application Insights is connected to my App Service. 
+After I tested the API in Swagger, I checked the logs in Azure Portal. 
+The logs showed successful GET and POST requests, including status and duration.
+```
+
+---
+
+# 4. Basic Security
+
+## Requirement
+
+The assignment requires basic security:
+
+- Restrict access using IP restrictions.
+- Enable HTTPS.
+- Schedule daily backups.
+
+---
+
+## 4.1 HTTPS Only
+
+HTTPS Only was enabled for the App Service using Azure CLI:
+
+```powershell
+az webapp update `
+  --resource-group $resourceGroup `
+  --name $appName `
+  --https-only true
+```
+
+This ensures that communication between clients and the application is encrypted.
+
+I can verify HTTPS Only with:
+
+```powershell
+az webapp show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-api-free-2026" `
+  --query "{name:name, httpsOnly:httpsOnly}" `
+  --output table
+```
+
+Expected result:
+
+```text
+Name                        HttpsOnly
+--------------------------  ---------
+zara-profile-api-free-2026  True
+```
+
+---
+
+## 4.2 IP Restriction
+
+IP restriction was configured to allow only my current public IP address:
+
+```text
+80.217.192.54/32
+```
+
+The rule name is:
+
+```text
+AllowMyIP
+```
+
+The default action was set to Deny, which means all other IP addresses are blocked by default.
+
+Example Azure CLI command for IP restriction:
+
+```powershell
+az webapp config access-restriction add `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-api-free-2026" `
+  --rule-name "AllowMyIP" `
+  --action Allow `
+  --ip-address "80.217.192.54/32" `
+  --priority 100
+```
+
+Command to verify IP restrictions:
+
+```powershell
+az webapp config access-restriction show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-api-free-2026" `
+  --output table
+```
+
+Important note:
+
+```text
+If the teacher needs to test the API from another network, that IP address must also be added to the allow list.
+```
+
+---
+
+## 4.3 Backup Limitation
+
+The assignment requires daily backups.
+
+However, App Service Backup is not supported in the Free tier.
+
+This project was created as a cost-aware student solution using the Free tier. Therefore, daily backup could not be configured without upgrading to a paid App Service tier.
+
+This limitation was documented.
+
+My teacher confirmed that documenting this limitation was acceptable.
+
+Explanation:
+
+```text
+App Service Backup is not available in the Free tier. 
+Because this is a student project and the goal was to avoid unnecessary cost, I documented this limitation instead of upgrading to a paid tier.
+```
+
+---
+
+# 5. Azure Storage Account
+
+## Requirement
+
+The assignment requires using an Azure Storage Account for static resources or log files.
+
+A Storage Account was created using Azure CLI:
+
+```powershell
+az storage account create `
+  --name $storageAccount `
+  --resource-group $resourceGroup `
+  --location $location `
+  --sku Standard_LRS
+```
+
+Storage Account name:
+
+```text
+zaraprofilestfree26
+```
+
+The Storage Account was created to prepare storage for static files or exported logs.
+
+Because the API is a simple profile API and does not require user-uploaded files, the Storage Account was mainly created as part of the Azure infrastructure and can be used for storing exported logs or static resources.
+
+---
+
+## 5.1 Verify Storage Account
+
+I can verify the Storage Account using:
+
+```powershell
+az storage account show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zaraprofilestfree26" `
+  --query "{name:name, location:location, sku:sku.name, kind:kind}" `
+  --output table
+```
+
+This confirms that the Storage Account exists.
+
+---
+
+# 6. Azure Key Vault and Managed Identity
+
+## Requirement
+
+The assignment requires using Azure Key Vault to handle sensitive information, such as API keys or connection strings, using Managed Identity.
+
+A Key Vault was created using Azure CLI:
+
+```powershell
+az keyvault create `
+  --name $keyVault `
+  --resource-group $resourceGroup `
+  --location $location
+```
+
+Key Vault name:
+
+```text
+kv-zara-prof-free26
+```
+
+Managed Identity was enabled for the App Service using:
+
+```powershell
+az webapp identity assign `
+  --name $appName `
+  --resource-group $resourceGroup
+```
+
+The goal was to store the SQL connection string in Key Vault:
+
+```powershell
+az keyvault secret set `
+  --vault-name $keyVault `
+  --name "SqlConnectionString" `
+  --value $connectionString
+```
+
+However, saving the SQL connection string as a Key Vault secret failed with:
+
+```text
+ForbiddenByRbac
+```
+
+This happened because my Azure account did not have permission to create secrets inside the Key Vault.
+
+Therefore, the infrastructure for Key Vault and Managed Identity was created, but the full Key Vault secret integration could not be completed because of RBAC permission limitations.
+
+This limitation was documented.
+
+---
+
+## 6.1 Verify Key Vault
+
+I can verify the Key Vault using:
+
+```powershell
+az keyvault show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "kv-zara-prof-free26" `
+  --query "{name:name, location:location, vaultUri:properties.vaultUri}" `
+  --output table
+```
+
+This confirms that the Key Vault exists.
+
+---
+
+## 6.2 Verify Managed Identity
+
+I can verify the Managed Identity for the App Service using:
+
+```powershell
+az webapp identity show `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-api-free-2026" `
+  --output table
+```
+
+This confirms that Managed Identity is enabled for the App Service.
+
+---
+
+## 6.3 Presentation Explanation
+
+```text
+I created a Key Vault and enabled Managed Identity for the App Service. 
+The goal was to store the SQL connection string in Key Vault. 
+However, creating the secret failed because my student Azure account did not have RBAC permission to create secrets. 
+I documented this limitation and used App Service application settings for the connection string instead.
+```
+
+---
+
+# 7. App Service Application Settings
+
+The SQL connection string was added to the App Service application settings using Azure CLI:
 
 ```powershell
 az webapp config appsettings set `
@@ -527,7 +788,7 @@ az webapp config appsettings set `
   --settings "ConnectionStrings__DefaultConnection=$connectionString"
 ```
 
-Application Insights connection string was added to App Service application settings:
+The Application Insights connection string was also added to App Service application settings:
 
 ```powershell
 az webapp config appsettings set `
@@ -538,263 +799,105 @@ az webapp config appsettings set `
 
 ---
 
-## Azure Setup Result
+## 7.1 Verify App Settings
 
-The script completed and returned:
-
-```text
-Azure setup completed!
-App URL: https://zara-profile-api-free-2026.azurewebsites.net
-```
-
-The resources were confirmed using:
+I can verify the App Service settings using:
 
 ```powershell
-az resource list --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg -o table
+az webapp config appsettings list `
+  --resource-group "RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg" `
+  --name "zara-profile-api-free-2026" `
+  --output table
 ```
 
-The following project resources were created:
+Note:
 
 ```text
-plan-zara-profile-free
-zara-profile-api-free-2026
-zara-profile-sql-free26
-ZaraProfileDb
-zaraprofilestfree26
-kv-zara-prof-free26
-appi-zara-profile-free
+Connection strings and secrets should not be shared publicly.
 ```
 
 ---
 
-## Cost-Aware Setup
+# 8. Azure Setup Script
 
-To avoid unnecessary cost in the school subscription, the App Service Plan was created using Free tier:
-
-```text
-LinuxFree
-```
-
-The script also prints this note:
+The Azure resources were scripted in:
 
 ```text
-Backup note: App Service backup is not supported in Free tier. Document this limitation or ask teacher if temporary Basic tier is required.
+azure-setup.ps1
 ```
 
-This was done because the assignment requires daily backups, but App Service Backup is not supported in the Free tier.
+The script includes:
+
+- Variables for resource names
+- App Service Plan creation
+- App Service creation
+- HTTPS Only configuration
+- Azure SQL Server creation
+- Azure SQL Database creation
+- SQL firewall rule
+- Storage Account creation
+- Key Vault creation
+- Managed Identity assignment
+- Application Insights creation
+- App Service application settings
+- Application Insights connection to App Service
+- IP restriction command
+- Notes about backup limitation
 
 ---
 
-## Key Vault Limitation
+# 9. Requirement Checklist
 
-The Key Vault was created successfully. However, saving the SQL connection string as a secret failed with the following error:
-
-```text
-ForbiddenByRbac
-```
-
-This means that the Azure account did not have permission to create secrets inside the Key Vault.
-
-The Key Vault resource was created, but the secret could not be stored because of RBAC permission limitations.
-
-This limitation should be documented in the assignment report.
-
-Explanation:
-
-```text
-I created Azure Key Vault using Azure CLI. However, when I tried to store the SQL connection string as a secret, the command failed with ForbiddenByRbac. This means my account did not have permission to set secrets in Key Vault. I documented this limitation because the resource was created successfully, but the secret could not be added due to RBAC permissions.
-```
+| Requirement | Status | Explanation |
+|---|---|---|
+| Create Azure App Service via Azure CLI | Completed | App Service `zara-profile-api-free-2026` was created using Azure CLI. |
+| Create App Service Plan via Azure CLI | Completed | App Service Plan `plan-zara-profile-free` was created using Azure CLI. |
+| Create Web API with EF Core database | Completed | ASP.NET Core Web API uses Entity Framework Core and Azure SQL Database. |
+| Automated deployment | Completed | GitHub Actions deploys the API to Azure App Service. |
+| Confirm deployed app works | Completed | Swagger was tested and GET/POST endpoints worked successfully. |
+| Application Insights | Completed | Requests were visible in Application Insights Logs. |
+| HTTPS Only | Completed | HTTPS Only was enabled for the App Service. |
+| IP restriction | Completed | Only my public IP address was allowed. |
+| Daily backups | Documented limitation | App Service Backup is not supported in the Free tier. Teacher confirmed this limitation is acceptable. |
+| Storage Account | Completed | Storage Account was created for static resources or exported logs. |
+| Key Vault + Managed Identity | Partially completed / documented limitation | Key Vault and Managed Identity were created, but saving secrets failed because of RBAC permission limitation. |
+| Azure CLI script | Completed | Azure resources were scripted in `azure-setup.ps1`. |
 
 ---
 
-## Backup Limitation
+# 10. Final Status
 
-The assignment requires daily backups of the App Service. However, this project was created using Free tier to avoid unnecessary cost in the school subscription.
+The API is deployed and working on Azure App Service.
 
-App Service Backup is not supported in the Free tier.
+The application can:
 
-Therefore, this limitation was documented instead of upgrading the App Service Plan to a paid tier.
+- Save profile data
+- Retrieve profile data
+- Connect to Azure SQL Database
+- Run online through Azure App Service
+- Be tested through Swagger
+- Be deployed automatically with GitHub Actions
+- Be monitored with Application Insights
 
-Explanation:
+Security was configured using:
 
-```text
-I attempted to configure daily backup for the App Service. However, the Free tier does not support App Service backup. To avoid unnecessary cost in the school subscription, I documented this limitation instead of upgrading the plan.
-```
+- HTTPS Only
+- IP restriction
+- Managed Identity
 
----
+Some limitations were documented:
 
-## Deployment Plan
+- App Service Backup is not supported in the Free tier.
+- Key Vault secret creation failed because of RBAC permission limitations.
 
-The next step is to deploy the API code to Azure App Service using GitHub Actions.
+The project demonstrates:
 
-The deployment target is:
-
-```text
-https://zara-profile-api-free-2026.azurewebsites.net
-```
-
-After the API is deployed, Swagger should be available at:
-
-```text
-https://zara-profile-api-free-2026.azurewebsites.net/swagger
-```
-
-GitHub Actions will be configured with a workflow file:
-
-```text
-.github/workflows/deploy.yml
-```
-
-The deployment will use the Azure App Service publish profile stored as a GitHub secret:
-
-```text
-AZURE_WEBAPP_PUBLISH_PROFILE
-```
-
----
-
-## Planned GitHub Actions Workflow
-
-The planned GitHub Actions workflow will build and deploy the API to Azure App Service.
-
-```yaml
-name: Deploy ZaraProfileApi to Azure App Service
-
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build-and-deploy:
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up .NET 8
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Restore
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Publish
-        run: dotnet publish --configuration Release --output ./publish
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: zara-profile-api-free-2026
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./publish
-```
-
----
-
-## Cleanup
-
-Azure resources can generate cost or use school subscription credits. Therefore, old resources should be removed after testing.
-
-To list resources:
-
-```powershell
-az resource list --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg -o table
-```
-
-To delete the project resources after testing:
-
-```powershell
-az webapp delete --name zara-profile-api-free-2026 --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg
-```
-
-```powershell
-az appservice plan delete --name plan-zara-profile-free --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg --yes
-```
-
-```powershell
-az sql server delete --name zara-profile-sql-free26 --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg --yes
-```
-
-```powershell
-az storage account delete --name zaraprofilestfree26 --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg --yes
-```
-
-```powershell
-az keyvault delete --name kv-zara-prof-free26 --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg
-```
-
-```powershell
-az resource delete --name appi-zara-profile-free --resource-group RG-Zara-Rangkhoni-e8ef10-DotNetCloudDeveloper-VT-Mars-Goteborg --resource-type "Microsoft.Insights/components"
-```
-
----
-
-## Current Status
-
-### Completed
-
-- ASP.NET Core Web API created
-- Entity Framework Core configured
-- Local SQL database created
-- Migration created and applied
-- Swagger tested locally
-- POST endpoint tested successfully
-- GET endpoint tested successfully
-- Azure CLI installed
-- Azure login completed
-- School Azure subscription selected
-- Azure resources created with Azure CLI
-- App Service Plan created using Free tier
-- App Service created
-- Azure SQL Server and Database created
-- Storage Account created
-- Key Vault created
-- Managed Identity enabled
-- Application Insights created
-- HTTPS Only enabled
-- Cleanup commands tested
-
-### Remaining
-
-- Configure GitHub Actions deployment
-- Add Azure publish profile as GitHub secret
-- Deploy API to Azure App Service
-- Run database migration against Azure SQL
-- Test deployed API in Swagger
-- Add IP restriction
-- Document Application Insights logs
-- Document backup limitation
-- Finalize assignment report
-
----
-
-## Reflection
-
-This project helped me understand the full process of creating and deploying a Web API to Azure App Service.
-
-I learned how to:
-
-- Build an ASP.NET Core Web API
-- Use Entity Framework Core with SQL Server
-- Test API endpoints with Swagger
-- Create Azure resources using Azure CLI
-- Work with Azure App Service
-- Configure Azure SQL Database
-- Use Azure Storage Account
-- Create Azure Key Vault
-- Enable Managed Identity
-- Connect Application Insights
-- Understand Azure RBAC permission issues
-- Clean up Azure resources after testing
-
-The project also showed the importance of cost awareness when working with cloud resources, especially in an educational subscription.
-
-
-IP restriction was configured to allow only my current public IP address. This demonstrates how access to the App Service can be limited for security reasons.
-IP restriction was configured to allow only my current public IP address: 80.217.192.54/32. All other IP addresses are denied by default. If the teacher needs to test the API from another network, that IP address must also be added to the allow list.
+- Azure App Service deployment
+- EF Core database connection
+- Azure SQL Database
+- Automated deployment with GitHub Actions
+- Basic security configuration
+- Monitoring with Application Insights
+- Azure Storage Account creation
+- Cost-aware Azure configuration
+- Step-by-step documentation
