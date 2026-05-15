@@ -30,6 +30,20 @@ The project uses:
 The goal of the project was to deploy a working Web API to Azure App Service, connect it to a database, automate deployment, configure basic security, enable monitoring, and document the process.
 
 ---
+## Table of Contents
+
+1. [Azure Resources](#azure-resources)
+2. [Project Structure](#project-structure)
+3. [Create Azure App Service and Deploy a Working Application](#1-create-azure-app-service-and-deploy-a-working-application)
+4. [Azure CLI Verification Commands](#2-azure-cli-verification-commands)
+5. [Application Insights for Logging and Monitoring](#3-application-insights-for-logging-and-monitoring)
+6. [Basic Security](#4-basic-security)
+7. [Azure Storage Account](#5-azure-storage-account)
+8. [Azure Key Vault and Managed Identity](#6-azure-key-vault-and-managed-identity)
+9. [App Service Application Settings](#7-app-service-application-settings)
+10. [Azure Setup Script](#8-azure-setup-script)
+11. [Requirement Checklist](#9-requirement-checklist)
+12. [Final Status](#10-final-status)
 
 ## Azure Resources
 
