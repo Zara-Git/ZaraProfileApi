@@ -22,7 +22,7 @@ public class ProfilesController : ControllerBase
         return await _context.Profiles.ToListAsync();
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<Profile>> GetProfile(int id)
     {
         var profile = await _context.Profiles.FindAsync(id);
@@ -44,7 +44,7 @@ public class ProfilesController : ControllerBase
         return CreatedAtAction(nameof(GetProfile), new { id = profile.Id }, profile);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateProfile(int id, Profile profile)
     {
         if (id != profile.Id)
@@ -58,7 +58,7 @@ public class ProfilesController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteProfile(int id)
     {
         var profile = await _context.Profiles.FindAsync(id);
@@ -73,4 +73,5 @@ public class ProfilesController : ControllerBase
 
         return NoContent();
     }
+    
 }
